@@ -74,15 +74,15 @@ window.onSpotifyWebPlaybackSDKReady = () => {
           console.log("No hay canción reproduciéndose ahora.");
           return;
         }
+        const containerTrack = document.getElementById("current-track")
         const trackName = data.item.name;
-        document.getElementById("current-track").textContent =
-      `Canción actual: ${trackName}`;
         const artistName = data.item.artists.map(a => a.name).join(", ");
+        containerTrack.textContent =
+      `Canción actual: ${trackName} - ${artistName}`;
         const albumCover = data.item.album.images[0].url;
-
-        console.log("Canción:", trackName);
-        console.log("Artista:", artistName);
-        console.log("Portada:", albumCover);
+        containerTrack.insertAdjacentHTML("beforeend",`
+          <img class="spotify-Port" src=${albumCover} alt="Spotify Port">
+          `)      
       });
   });
 
