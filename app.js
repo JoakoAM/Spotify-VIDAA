@@ -26,25 +26,25 @@ if (token) {
       document.getElementById("email").textContent = profile.email;
     });
 
-  // Playlists
-  fetch("https://api.spotify.com/v1/me/playlists", {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-    .then(res => res.json())
-    .then(data => {
-      const playlistsDiv = document.getElementById("playlists");
-      data.items.forEach(pl => {
-        const div = document.createElement("div");
-        div.className = "playlist";
-        div.innerHTML = `
-            <img src="${pl.images?.[0]?.url || ''}" alt="Cover" style="width:100px">
-            <p>${pl.name}</p>
-            <p>Tracks: ${pl.tracks.total}</p>
-          `;
-        div.onclick = () => loadTracks(pl.id);
-        playlistsDiv.appendChild(div);
-      });
-    });
+  // // Playlists
+  // fetch("https://api.spotify.com/v1/me/playlists", {
+  //   headers: { Authorization: `Bearer ${token}` }
+  // })
+  //   .then(res => res.json())
+  //   .then(data => {
+  //     const playlistsDiv = document.getElementById("playlists");
+  //     data.items.forEach(pl => {
+  //       const div = document.createElement("div");
+  //       div.className = "playlist";
+  //       div.innerHTML = `
+  //           <img src="${pl.images?.[0]?.url || ''}" alt="Cover" style="width:100px">
+  //           <p>${pl.name}</p>
+  //           <p>Tracks: ${pl.tracks.total}</p>
+  //         `;
+  //       div.onclick = () => loadTracks(pl.id);
+  //       playlistsDiv.appendChild(div);
+  //     });
+  //   });
 }
 
 // Web Playback SDK
