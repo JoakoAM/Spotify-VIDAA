@@ -2,28 +2,26 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mini Spotify Extendido</title>
+  <title>Mini Spotify</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Mini Spotify Extendido</h1>
-
+  <h1>Mini Spotify con Player</h1>
   <div id="login-section">
     <a href="https://spotifyvidaa-backend.onrender.com/login">
       <button>Conectar con Spotify</button>
     </a>
   </div>
 
-  <div id="profile-section" style="display:none;">
-    <h2>Perfil de Spotify</h2>
-    <img id="profile-pic" src="" alt="Foto">
-    <p id="display-name"></p>
-    <p id="email"></p>
+  <div id="player-section" style="display:none;">
+    <p id="current-track">Canción actual: -</p>
+    <button onclick="play()">▶️ Play</button>
+    <button onclick="pause()">⏸ Pause</button>
+  </div>
 
-    <h3>Playlists</h3>
-    <div id="playlists"></div>
-
-    <h3>Reproducción</h3>
-    <div id="player-controls" style="display:none;">
-      <button onclick="play()">▶️ Play</button>
-      <button onclick="
+  <!-- Tu JS -->
+  <script src="app.js"></script>
+  <!-- SDK de Spotify -->
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+</body>
+</html>
