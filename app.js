@@ -63,12 +63,6 @@ window.onSpotifyWebPlaybackSDKReady = () => {
 
   player.addListener('player_state_changed', state => {
     if (!state) return;
-    const track = state.track_window.current_track;
-    document.getElementById("current-track").textContent =
-      `Canción actual: ${track.name} - ${track.artists.map(a => a.name).join(", ")}`;
-  });
-  player.addListener('player_state_changed', state => {
-    if (!state) return;
     fetch("https://api.spotify.com/v1/me/player", {
       headers: {
         Authorization: `Bearer ${token}`
