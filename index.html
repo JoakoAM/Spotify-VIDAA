@@ -3,54 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <title>Mini Spotify</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+    img { border-radius: 50%; width: 100px; }
+    .playlist { margin: 10px; padding: 10px; border: 1px solid #ccc; display: inline-block; width: 200px; }
+  </style>
 </head>
 <body>
-  <h1>Mini Spotify con Player</h1>
-
+  <h1>Mini Spotify</h1>
   <div id="login-section">
     <a href="https://spotifyvidaa-backend.onrender.com/login">
       <button>Conectar con Spotify</button>
     </a>
   </div>
 
-  <div id="player-section" style="display:none;">
-    <p id="current-track">Canción actual: -</p>
-    <button onclick="play()">▶️ Play</button>
-    <button onclick="pause()">⏸ Pause</button>
+  <div id="profile-section" style="display:none;">
+    <h2>Perfil de Spotify</h2>
+    <img id="profile-pic" src="" alt="Foto">
+    <p id="display-name"></p>
+    <p id="email"></p>
+    <h3>Playlists</h3>
+    <div id="playlists"></div>
   </div>
 
-  <!-- Define el callback global ANTES de cargar el SDK -->
   <script>
-    window.onSpotifyWebPlaybackSDKReady = () => {
-      const token = localStorage.getItem("spotify_token");
-      const player = new Spotify.Player({
-        name: "Mini Spotify Web Player",
-        getOAuthToken: cb => { cb(token); },
-        volume: 0.8
+    // 1️⃣ Leer token de URL o localStorage
+    const hash = window.location.hash;
+    let token = null;
+
+    if (hash) {
+      const params = new URLSearchParams(hash.substring(1));
+      token = params.get("access_token");
+      if (token) localStorage.setItem("spotify_token", token);
+      window.location.hash = ""; // limpiar URL
+    } else {
+      token = localStorage.getItem("spotify_token");
+    }
+
+    if (token) {
+      document.getElementById("login-section").style.display = "none";
+      document.getElementById("profile-section").style.display = "block";
+
+      // 2️⃣ Obtener perfil del usuario
+      fetch("https://api.spotify.com/v1/me", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(profile => {
+        document.getElementById("profile-pic").src = profile.images?.[0]?.url || "";
+        document.getElementById("display-name").textContent = profile.display_name;
+        document.getElementById("email").textContent = profile.email;
       });
 
-      player.addListener('ready', ({ device_id }) => {
-        console.log('Ready with Device ID', device_id);
-        document.getElementById("player-section").style.display = "block";
+      // 3️⃣ Obtener playlists
+      fetch("https://api.spotify.com/v1/me/playlists", {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const playlistsDiv = document.getElementById("playlists");
+        data.items.forEach(pl => {
+          const div = document.createElement("div");
+          div.className = "playlist";
+          div.innerHTML = `
+            <img src="${pl.images?.[0]?.url || ''}" alt="Cover" style="width:100px">
+            <p>${pl.name}</p>
+            <p>Tracks: ${pl.tracks.total}</p>
+          `;
+          playlistsDiv.appendChild(div);
+        });
       });
-
-      player.addListener('player_state_changed', state => {
-        if (!state) return;
-        const track = state.track_window.current_track;
-        document.getElementById("current-track").textContent =
-          `Canción actual: ${track.name} - ${track.artists.map(a => a.name).join(", ")}`;
-      });
-
-      player.connect();
-      window.spotifyPlayer = player;
-    };
-
-    function play() { window.spotifyPlayer?.resume(); }
-    function pause() { window.spotifyPlayer?.pause(); }
+    }
   </script>
-
-  <!-- Carga el SDK DESPUÉS de definir el callback -->
-  <script src="https://sdk.scdn.co/spotify-player.js"></script>
 </body>
 </html>
