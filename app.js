@@ -3,7 +3,7 @@ const userDiv = document.getElementById("user");
 
 // Al hacer click, vamos a tu backend en Render
 loginBtn.addEventListener("click", () => {
-  window.location.href = "https://spotifyvidaabackend.onrender.com/login";
+  window.location.href = "https://spotifyvidaa-backend.onrender.com/login";
 });
 
 // Cuando Spotify redirige al frontend con el token en URL
