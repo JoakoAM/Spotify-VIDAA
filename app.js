@@ -67,6 +67,30 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     document.getElementById("current-track").textContent =
       `Canción actual: ${track.name} - ${track.artists.map(a => a.name).join(", ")}`;
   });
+  player.addListener('player_state_changed', state => {
+    if (!state) return;
+    fetch("https://api.spotify.com/v1/me/player", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.item) {
+          console.log("No hay canción reproduciéndose ahora.");
+          return;
+        }
+        const trackName = data.item.name;
+        document.getElementById("current-track").textContent =
+      `Canción actual: ${trackName}`;
+        const artistName = data.item.artists.map(a => a.name).join(", ");
+        const albumCover = data.item.album.images[0].url;
+
+        console.log("Canción:", trackName);
+        console.log("Artista:", artistName);
+        console.log("Portada:", albumCover);
+      });
+  });
 
   player.connect();
   window.spotifyPlayer = player;
