@@ -2,17 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Mini Spotify</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-    img { border-radius: 50%; width: 100px; }
-    .playlist { margin: 10px; padding: 10px; border: 1px solid #ccc; display: inline-block; width: 200px; }
-  </style>
+  <title>Mini Spotify Extendido</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Mini Spotify</h1>
+  <h1>Mini Spotify Extendido</h1>
+
   <div id="login-section">
-    <a href="https://spotifyvidaabackend.onrender.com/login">
+    <a href="https://spotifyvidaa-backend.onrender.com/login">
       <button>Conectar con Spotify</button>
     </a>
   </div>
@@ -22,59 +19,11 @@
     <img id="profile-pic" src="" alt="Foto">
     <p id="display-name"></p>
     <p id="email"></p>
+
     <h3>Playlists</h3>
     <div id="playlists"></div>
-  </div>
 
-  <script>
-    // 1️⃣ Leer token de URL o localStorage
-    const hash = window.location.hash;
-    let token = null;
-
-    if (hash) {
-      const params = new URLSearchParams(hash.substring(1));
-      token = params.get("access_token");
-      if (token) localStorage.setItem("spotify_token", token);
-      window.location.hash = ""; // limpiar URL
-    } else {
-      token = localStorage.getItem("spotify_token");
-    }
-
-    if (token) {
-      document.getElementById("login-section").style.display = "none";
-      document.getElementById("profile-section").style.display = "block";
-
-      // 2️⃣ Obtener perfil del usuario
-      fetch("https://api.spotify.com/v1/me", {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(profile => {
-        document.getElementById("profile-pic").src = profile.images?.[0]?.url || "";
-        document.getElementById("display-name").textContent = profile.display_name;
-        document.getElementById("email").textContent = profile.email;
-      });
-
-      // 3️⃣ Obtener playlists
-      fetch("https://api.spotify.com/v1/me/playlists", {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(data => {
-        const playlistsDiv = document.getElementById("playlists");
-        data.items.forEach(pl => {
-          const div = document.createElement("div");
-          div.className = "playlist";
-          div.innerHTML = `
-            <img src="${pl.images?.[0]?.url || ''}" alt="Cover" style="width:100px">
-            <p>${pl.name}</p>
-            <p>Tracks: ${pl.tracks.total}</p>
-          `;
-          playlistsDiv.appendChild(div);
-        });
-      });
-    }
-  </script>
-</body>
-</html>
-
+    <h3>Reproducción</h3>
+    <div id="player-controls" style="display:none;">
+      <button onclick="play()">▶️ Play</button>
+      <button onclick="
