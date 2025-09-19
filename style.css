@@ -1,5 +1,22 @@
+body {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 50px;
+}
+
+img {
+  border-radius: 50%;
+  width: 100px;
+}
+
+.playlist, .track {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  display: inline-block;
+  width: 200px;
+}
+
 button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
+  margin: 5px;
 }
