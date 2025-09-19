@@ -1,161 +1,141 @@
-// ==============================
-// Función para obtener token válido del backend
-// ==============================
-async function getAccessTokenFromBackend() {
-  try {
-    const res = await fetch("https://spotifyvidaabackend.onrender.com/get-token");
-    const data = await res.json();
-    return data.access_token;
-  } catch (err) {
-    console.error("Error obteniendo token del backend:", err);
-    return null;
-  }
+
+const hash = window.location.hash;
+let token = null;
+
+if (hash) {
+  const params = new URLSearchParams(hash.substring(1));
+  token = params.get("access_token");
+  if (token) localStorage.setItem("spotify_token", token);
+  window.location.hash = "";
+} else {
+  token = localStorage.getItem("spotify_token");
 }
 
-let accessToken;
-let songDuration = 0;
-let progressInterval;
-
-// ==============================
-// Inicialización del reproductor
-// ==============================
-(async () => {
-  accessToken = await getAccessTokenFromBackend();
-  if (!accessToken) return;
-
-  // Ocultar login y mostrar perfil
+if (token) {
   document.getElementById("login-section").style.display = "none";
   document.getElementById("profile-section").style.display = "block";
 
-  await fetchProfile();
-  startPlayerUpdates();
-})();
-
-// ==============================
-// Obtener perfil del usuario
-// ==============================
-async function fetchProfile() {
-  try {
-    const res = await fetch("https://api.spotify.com/v1/me", {
-      headers: { Authorization: `Bearer ${accessToken}` },
+  // Perfil
+  fetch("https://api.spotify.com/v1/me", {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(profile => {
+      document.getElementById("profile-pic").src = profile.images?.[0]?.url || "";
+      document.getElementById("display-name").textContent = profile.display_name;
+      document.getElementById("email").textContent = profile.email;
     });
-    const data = await res.json();
-    document.getElementById("profile-pic").src = data.images[0]?.url || "";
-    document.getElementById("display-name").innerText = data.display_name;
-    document.getElementById("email").innerText = data.email;
-  } catch (err) {
-    console.error("Error obteniendo perfil:", err);
-  }
+
+  // // Playlists
+  // fetch("https://api.spotify.com/v1/me/playlists", {
+  //   headers: { Authorization: `Bearer ${token}` }
+  // })
+  //   .then(res => res.json())
+  //   .then(data => {
+  //     const playlistsDiv = document.getElementById("playlists");
+  //     data.items.forEach(pl => {
+  //       const div = document.createElement("div");
+  //       div.className = "playlist";
+  //       div.innerHTML = `
+  //           <img src="${pl.images?.[0]?.url || ''}" alt="Cover" style="width:100px">
+  //           <p>${pl.name}</p>
+  //           <p>Tracks: ${pl.tracks.total}</p>
+  //         `;
+  //       div.onclick = () => loadTracks(pl.id);
+  //       playlistsDiv.appendChild(div);
+  //     });
+  //   });
 }
 
-// ==============================
-// Actualizar canción actual y barra de progreso
-// ==============================
-async function startPlayerUpdates() {
-  await fetchCurrentTrack();
-  setInterval(fetchCurrentTrack, 5000); // refresca cada 5 segundos
-}
-
-async function fetchCurrentTrack() {
-  try {
-    const res = await fetch("https://spotifyvidaabackend.onrender.com/current");
-    const data = await res.json();
-
-    if (!data.item) {
-      document.getElementById("current-track").innerText = "Canción actual: -";
-      return;
-    }
-
-    const track = data.item;
-    const progress_ms = data.progress_ms || 0;
-    songDuration = track.duration_ms;
-
-    document.getElementById("current-track").innerHTML = `
-      <img src="${track.album.images[0].url}" alt="Portada" style="width:80px; display:block; margin:auto; border-radius:5px;">
-      <strong>${track.name}</strong> - ${track.artists.map(a => a.name).join(", ")}
-      <div style="margin-top:5px;">
-        <span id="currentTime">0:00</span>
-        <input id="progressBar" type="range" min="0" max="100" value="${(progress_ms / songDuration) * 100}" style="width:60%;">
-        <span id="duration">${formatTime(songDuration)}</span>
-      </div>
-    `;
-
-    clearInterval(progressInterval);
-    let startTime = progress_ms;
-    progressInterval = setInterval(() => {
-      startTime += 1000;
-      if (startTime > songDuration) startTime = songDuration;
-      const progressBar = document.getElementById("progressBar");
-      progressBar.value = (startTime / songDuration) * 100;
-      document.getElementById("currentTime").innerText = formatTime(startTime);
-    }, 1000);
-
-  } catch (err) {
-    console.error("Error obteniendo canción:", err);
-  }
-}
-
-// ==============================
-// Función para formatear tiempo
-// ==============================
-function formatTime(ms) {
-  const totalSeconds = Math.floor(ms / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
-}
-
-// ==============================
-// Controles de reproducción
-// ==============================
-async function play() { await controlPlayer("play"); }
-async function pause() { await controlPlayer("pause"); }
-async function next() { await controlPlayer("next"); }
-async function previous() { await controlPlayer("previous"); }
-
-async function controlPlayer(action) {
-  try {
-    // Siempre obtiene token actualizado del backend
-    accessToken = await getAccessTokenFromBackend();
-    const endpoint = `https://api.spotify.com/v1/me/player/${action}`;
-    await fetch(endpoint, {
-      method: action === "play" ? "PUT" : "POST",
-      headers: { Authorization: `Bearer ${accessToken}` },
-    });
-  } catch (err) {
-    console.error("Error controlando reproductor:", err);
-  }
-}
-
+// Web Playback SDK
 window.onSpotifyWebPlaybackSDKReady = () => {
   const player = new Spotify.Player({
-    name: "Mini Spotify",
-    getOAuthToken: async cb => {
-      // Obtener token válido desde tu backend
-      const res = await fetch("https://spotifyvidaabackend.onrender.com/get-token");
-      const data = await res.json();
-      cb(data.access_token);
-    },
-    volume: 0.8,
+    name: "Mini Spotify Web Player",
+    getOAuthToken: cb => { cb(token); },
+    volume: 0.8
   });
 
-  // Listeners
-  player.addListener("ready", ({ device_id }) => {
-    console.log("Ready with Device ID", device_id);
+  player.addListener('ready', ({ device_id }) => {
+    console.log('Ready with Device ID', device_id);
     window.device_id = device_id;
     document.getElementById("player-controls").style.display = "block";
   });
 
-  player.addListener("player_state_changed", state => {
-    console.log("State changed", state);
-    // Aquí puedes actualizar barra de progreso, portada, etc.
+  player.addListener('player_state_changed', state => {
+    if (!state) return;
+    fetch("https://api.spotify.com/v1/me/player", {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!data.item) {
+          console.log("No hay canción reproduciéndose ahora.");
+          return;
+        }
+        const containerTrack = document.getElementById("current-track")
+        const trackName = data.item.name;
+        const artistName = data.item.artists.map(a => a.name).join(", ");
+        containerTrack.textContent =
+      `Canción actual: ${trackName} - ${artistName}`;
+        const albumCover = data.item.album.images[0].url;
+        containerTrack.insertAdjacentHTML("beforeend",`
+          <img class="spotify-Port" src=${albumCover} alt="Spotify Port">
+          `)      
+      });
   });
 
   player.connect();
+  window.spotifyPlayer = player;
 };
-// ==============================
-// Botón extra de prueba
-// ==============================
+
+function play() { window.spotifyPlayer?.resume(); }
+function pause() { window.spotifyPlayer?.pause(); }
+function next() { window.spotifyPlayer?.nextTrack(); }
+function previous() { window.spotifyPlayer?.previousTrack(); }
+
+// Cargar tracks de una playlist y reproducir
+function loadTracks(playlistId) {
+  fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+    headers: { Authorization: `Bearer ${token}` }
+  })
+    .then(res => res.json())
+    .then(data => {
+      const uris = data.items.map(item => item.track.uri);
+      // Reproducir todos los tracks de la playlist
+      fetch(`https://api.spotify.com/v1/me/player/play?device_id=${window.device_id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ uris }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+    });
+}
+
+
+
 function llamarFoto() {
-  alert("Esto puede usarse para llamar la foto de la canción o perfil");
+  fetch("https://api.spotify.com/v1/me/player", {
+    headers: {
+      Authorization: `Bearer ${token}`
+    }
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (!data.item) {
+        console.log("No hay canción reproduciéndose ahora.");
+        return;
+      }
+
+      const trackName = data.item.name;
+      const artistName = data.item.artists.map(a => a.name).join(", ");
+      const albumCover = data.item.album.images[0].url;
+
+      console.log("Canción:", trackName);
+      console.log("Artista:", artistName);
+      console.log("Portada:", albumCover);
+    });
 }
