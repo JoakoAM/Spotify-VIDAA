@@ -6,7 +6,9 @@
   <style>
     body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
     img { border-radius: 50%; width: 100px; }
-    .playlist { margin: 10px; padding: 10px; border: 1px solid #ccc; display: inline-block; width: 200px; }
+    .playlist { margin: 10px; padding: 10px; border: 1px solid #ccc; display: inline-block; width: 200px; cursor: pointer; }
+    #player-controls { margin-top: 20px; }
+    button { margin: 5px; padding: 10px; font-size: 16px; }
   </style>
 </head>
 <body>
@@ -22,12 +24,21 @@
     <img id="profile-pic" src="" alt="Foto">
     <p id="display-name"></p>
     <p id="email"></p>
+
     <h3>Playlists</h3>
     <div id="playlists"></div>
+
+    <div id="player-controls" style="display:none;">
+      <p id="current-track">Canción actual: -</p>
+      <button onclick="play()">▶️ Play</button>
+      <button onclick="pause()">⏸ Pause</button>
+      <button onclick="next()">⏭ Siguiente</button>
+      <button onclick="previous()">⏮ Anterior</button>
+    </div>
   </div>
 
+  <!-- Callback global -->
   <script>
-    // 1️⃣ Leer token de URL o localStorage
     const hash = window.location.hash;
     let token = null;
 
@@ -35,7 +46,7 @@
       const params = new URLSearchParams(hash.substring(1));
       token = params.get("access_token");
       if (token) localStorage.setItem("spotify_token", token);
-      window.location.hash = ""; // limpiar URL
+      window.location.hash = "";
     } else {
       token = localStorage.getItem("spotify_token");
     }
@@ -44,7 +55,7 @@
       document.getElementById("login-section").style.display = "none";
       document.getElementById("profile-section").style.display = "block";
 
-      // 2️⃣ Obtener perfil del usuario
+      // Perfil
       fetch("https://api.spotify.com/v1/me", {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -55,7 +66,7 @@
         document.getElementById("email").textContent = profile.email;
       });
 
-      // 3️⃣ Obtener playlists
+      // Playlists
       fetch("https://api.spotify.com/v1/me/playlists", {
         headers: { Authorization: `Bearer ${token}` }
       })
@@ -70,10 +81,64 @@
             <p>${pl.name}</p>
             <p>Tracks: ${pl.tracks.total}</p>
           `;
+          div.onclick = () => loadTracks(pl.id);
           playlistsDiv.appendChild(div);
         });
       });
     }
+
+    // Web Playback SDK
+    window.onSpotifyWebPlaybackSDKReady = () => {
+      const player = new Spotify.Player({
+        name: "Mini Spotify Web Player",
+        getOAuthToken: cb => { cb(token); },
+        volume: 0.8
+      });
+
+      player.addListener('ready', ({ device_id }) => {
+        console.log('Ready with Device ID', device_id);
+        window.device_id = device_id;
+        document.getElementById("player-controls").style.display = "block";
+      });
+
+      player.addListener('player_state_changed', state => {
+        if (!state) return;
+        const track = state.track_window.current_track;
+        document.getElementById("current-track").textContent =
+          `Canción actual: ${track.name} - ${track.artists.map(a => a.name).join(", ")}`;
+      });
+
+      player.connect();
+      window.spotifyPlayer = player;
+    };
+
+    function play() { window.spotifyPlayer?.resume(); }
+    function pause() { window.spotifyPlayer?.pause(); }
+    function next() { window.spotifyPlayer?.nextTrack(); }
+    function previous() { window.spotifyPlayer?.previousTrack(); }
+
+    // Cargar tracks de una playlist y reproducir
+    function loadTracks(playlistId) {
+      fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      .then(res => res.json())
+      .then(data => {
+        const uris = data.items.map(item => item.track.uri);
+        // Reproducir todos los tracks de la playlist
+        fetch(`https://api.spotify.com/v1/me/player/play?device_id=${window.device_id}`, {
+          method: 'PUT',
+          body: JSON.stringify({ uris }),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+      });
+    }
   </script>
+
+  <!-- SDK de Spotify -->
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
 </body>
 </html>
