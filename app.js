@@ -78,11 +78,14 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         const trackName = data.item.name;
         const artistName = data.item.artists.map(a => a.name).join(", ");
         containerTrack.textContent =
-      `Canción actual: ${trackName} - ${artistName}`;
+          `Canción actual: ${trackName} - ${artistName}`;
         const albumCover = data.item.album.images[0].url;
-        containerTrack.insertAdjacentHTML("beforeend",`
+        const container = document.createElement('div');
+
+        container.insertAdjacentHTML("beforeend", `
           <img class="spotify-Port" src=${albumCover} alt="Spotify Port">
-          `)      
+          `);
+        document.body.append(container);
       });
   });
 
