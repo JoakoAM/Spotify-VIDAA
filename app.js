@@ -1,20 +1,39 @@
-// Extraer access token si viene en la URL
-const hash = window.location.hash.substring(1).split("&").reduce((acc, item) => {
-  const [key, value] = item.split("=");
-  acc[key] = value;
-  return acc;
-}, {});
-const accessToken = hash.access_token || null;
-
-// Si hay access token, ocultar login y mostrar perfil
-if (accessToken) {
-  document.getElementById("login-section").style.display = "none";
-  document.getElementById("profile-section").style.display = "block";
-  fetchProfile();
-  startPlayerUpdates();
+// ==============================
+// Función para obtener token válido del backend
+// ==============================
+async function getAccessTokenFromBackend() {
+  try {
+    const res = await fetch("https://spotifyvidaabackend.onrender.com/get-token");
+    const data = await res.json();
+    return data.access_token;
+  } catch (err) {
+    console.error("Error obteniendo token del backend:", err);
+    return null;
+  }
 }
 
+let accessToken;
+let songDuration = 0;
+let progressInterval;
+
+// ==============================
+// Inicialización del reproductor
+// ==============================
+(async () => {
+  accessToken = await getAccessTokenFromBackend();
+  if (!accessToken) return;
+
+  // Ocultar login y mostrar perfil
+  document.getElementById("login-section").style.display = "none";
+  document.getElementById("profile-section").style.display = "block";
+
+  await fetchProfile();
+  startPlayerUpdates();
+})();
+
+// ==============================
 // Obtener perfil del usuario
+// ==============================
 async function fetchProfile() {
   try {
     const res = await fetch("https://api.spotify.com/v1/me", {
@@ -29,13 +48,12 @@ async function fetchProfile() {
   }
 }
 
+// ==============================
 // Actualizar canción actual y barra de progreso
-let songDuration = 0;
-let progressInterval;
-
+// ==============================
 async function startPlayerUpdates() {
   await fetchCurrentTrack();
-  setInterval(fetchCurrentTrack, 5000); // refresca cada 5s
+  setInterval(fetchCurrentTrack, 5000); // refresca cada 5 segundos
 }
 
 async function fetchCurrentTrack() {
@@ -77,6 +95,9 @@ async function fetchCurrentTrack() {
   }
 }
 
+// ==============================
+// Función para formatear tiempo
+// ==============================
 function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
@@ -84,22 +105,18 @@ function formatTime(ms) {
   return `${minutes}:${seconds.toString().padStart(2,"0")}`;
 }
 
-// Controles de reproducción usando Web API de Spotify
-async function play() {
-  await controlPlayer("play");
-}
-async function pause() {
-  await controlPlayer("pause");
-}
-async function next() {
-  await controlPlayer("next");
-}
-async function previous() {
-  await controlPlayer("previous");
-}
+// ==============================
+// Controles de reproducción
+// ==============================
+async function play() { await controlPlayer("play"); }
+async function pause() { await controlPlayer("pause"); }
+async function next() { await controlPlayer("next"); }
+async function previous() { await controlPlayer("previous"); }
 
 async function controlPlayer(action) {
   try {
+    // Siempre obtiene token actualizado del backend
+    accessToken = await getAccessTokenFromBackend();
     const endpoint = `https://api.spotify.com/v1/me/player/${action}`;
     await fetch(endpoint, {
       method: action === "play" ? "PUT" : "POST",
@@ -110,7 +127,9 @@ async function controlPlayer(action) {
   }
 }
 
+// ==============================
 // Botón extra de prueba
+// ==============================
 function llamarFoto() {
   alert("Esto puede usarse para llamar la foto de la canción o perfil");
 }
