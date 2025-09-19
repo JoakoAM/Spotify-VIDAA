@@ -75,7 +75,7 @@ async function fetchCurrentTrack() {
       <strong>${track.name}</strong> - ${track.artists.map(a => a.name).join(", ")}
       <div style="margin-top:5px;">
         <span id="currentTime">0:00</span>
-        <input id="progressBar" type="range" min="0" max="100" value="${(progress_ms/songDuration)*100}" style="width:60%;">
+        <input id="progressBar" type="range" min="0" max="100" value="${(progress_ms / songDuration) * 100}" style="width:60%;">
         <span id="duration">${formatTime(songDuration)}</span>
       </div>
     `;
@@ -102,7 +102,7 @@ function formatTime(ms) {
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  return `${minutes}:${seconds.toString().padStart(2,"0")}`;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 }
 
 // ==============================
@@ -127,6 +127,32 @@ async function controlPlayer(action) {
   }
 }
 
+window.onSpotifyWebPlaybackSDKReady = () => {
+  const player = new Spotify.Player({
+    name: "Mini Spotify",
+    getOAuthToken: async cb => {
+      // Obtener token válido desde tu backend
+      const res = await fetch("https://spotifyvidaabackend.onrender.com/get-token");
+      const data = await res.json();
+      cb(data.access_token);
+    },
+    volume: 0.8,
+  });
+
+  // Listeners
+  player.addListener("ready", ({ device_id }) => {
+    console.log("Ready with Device ID", device_id);
+    window.device_id = device_id;
+    document.getElementById("player-controls").style.display = "block";
+  });
+
+  player.addListener("player_state_changed", state => {
+    console.log("State changed", state);
+    // Aquí puedes actualizar barra de progreso, portada, etc.
+  });
+
+  player.connect();
+};
 // ==============================
 // Botón extra de prueba
 // ==============================
