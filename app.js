@@ -60,7 +60,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
     window.device_id = device_id;
     document.getElementById("player-controls").style.display = "block";
   });
-  
+
   player.addListener('player_state_changed', state => {
     if (!state) return;
     fetch("https://api.spotify.com/v1/me/player", {
@@ -79,11 +79,28 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         const artistName = data.item.artists.map(a => a.name).join(", ");
         trackName.getElementBy('current-song').textContent = `Canción actual: ${trackName} - ${artistName}`;
         const albumCover = data.item.album.images[0].url;
-        containerTrack.insertAdjacentHTML("beforeend",`
+        containerTrack.insertAdjacentHTML("beforeend", `
           <img class="spotify-Port" src=${albumCover} alt="Spotify Port">
-          `)      
+          `)
+        const { duration, position, paused } = state;
+        let progressInterval;
+        const progressBar = document.getElementById("progress-bar");
+        const trackInfo = document.getElementById("track-info");
+        progressBar.max = duration;
+        progressBar.value = position;
+
+        clearInterval(progressInterval);
+
+        if (!paused) {
+          progressInterval = setInterval(() => {
+            if (progressBar.value < duration) {
+              progressBar.value += 1000; // aumenta cada segundo
+            }
+          }, 1000);
+        }
       });
   });
+
 
   player.connect();
   window.spotifyPlayer = player;
@@ -94,47 +111,3 @@ function pause() { window.spotifyPlayer?.pause(); }
 function next() { window.spotifyPlayer?.nextTrack(); }
 function previous() { window.spotifyPlayer?.previousTrack(); }
 
-// Cargar tracks de una playlist y reproducir
-function loadTracks(playlistId) {
-  fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
-    headers: { Authorization: `Bearer ${token}` }
-  })
-    .then(res => res.json())
-    .then(data => {
-      const uris = data.items.map(item => item.track.uri);
-      // Reproducir todos los tracks de la playlist
-      fetch(`https://api.spotify.com/v1/me/player/play?device_id=${window.device_id}`, {
-        method: 'PUT',
-        body: JSON.stringify({ uris }),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        }
-      });
-    });
-}
-
-
-
-function llamarFoto() {
-  fetch("https://api.spotify.com/v1/me/player", {
-    headers: {
-      Authorization: `Bearer ${token}`
-    }
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (!data.item) {
-        console.log("No hay canción reproduciéndose ahora.");
-        return;
-      }
-
-      const trackName = data.item.name;
-      const artistName = data.item.artists.map(a => a.name).join(", ");
-      const albumCover = data.item.album.images[0].url;
-
-      console.log("Canción:", trackName);
-      console.log("Artista:", artistName);
-      console.log("Portada:", albumCover);
-    });
-}
