@@ -72,11 +72,36 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   window.spotifyPlayer = player;
 };
 
-function play() { window.spotifyPlayer?.resume(); }
-function pause() { window.spotifyPlayer?.pause(); }
-function next() { window.spotifyPlayer?.nextTrack(); }
-function previous() { window.spotifyPlayer?.previousTrack(); }
+// Actualizar card
+window.spotifyPlayer.addListener('player_state_changed', state => {
+  if (!state) return;
+  const track = state.track_window.current_track;
+  const progress = state.position;
+  const duration = track.duration_ms;
 
+  document.getElementById("card-track").textContent = track.name;
+  document.getElementById("card-artist").textContent = track.artists.map(a => a.name).join(", ");
+  document.getElementById("card-cover").src = track.album.images[0]?.url || "";
+
+  const percent = (progress / duration) * 100;
+  document.getElementById("card-progress").style.width = percent + "%";
+
+  document.getElementById("card-time-now").textContent =
+    Math.floor(progress / 60000) + ":" + String(Math.floor((progress % 60000) / 1000)).padStart(2, '0');
+  document.getElementById("card-time-full").textContent =
+    Math.floor(duration / 60000) + ":" + String(Math.floor((duration % 60000) / 1000)).padStart(2, '0');
+});
+
+// Botones
+document.getElementById("play").onclick = () => {
+  player.togglePlay();
+};
+document.getElementById("next").onclick = () => {
+  player.nextTrack();
+};
+document.getElementById("prev").onclick = () => {
+  player.previousTrack();
+};
 // Cargar tracks de una playlist y reproducir
 function loadTracks(playlistId) {
   fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
