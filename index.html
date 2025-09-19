@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <title>Mini Spotify</title>
-  <style>
-    body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
-    img { border-radius: 50%; width: 100px; }
-    .playlist { margin: 10px; padding: 10px; border: 1px solid #ccc; display: inline-block; width: 200px; cursor: pointer; }
-    #player-controls { margin-top: 20px; }
-    button { margin: 5px; padding: 10px; font-size: 16px; }
-  </style>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/80e5660207.js" crossorigin="anonymous"></script>
 </head>
 <body>
-  <h1>Mini Spotify</h1>
-  <div id="login-section">
+  <h1 style="font-size: 100px;">Mini Spotify</h1>
+  <div id="login-section"style="margin-top: 263px;">
     <a href="https://spotifyvidaabackend.onrender.com/login">
-      <button>Conectar con Spotify</button>
+      <i class="fa-brands fa-spotify" style="
+        font-size: 1500px;
+        color:#1dd65f;
+        "></i>
+        <div></div>
     </a>
   </div>
 
@@ -30,12 +29,14 @@
 
     <div id="player-controls" style="display:none;">
       <p id="current-track">Canción actual: -</p>
-      <button onclick="play()">▶️ Play</button>
+      
+      <button onclick="play()"><i onclick="play()" class="fa-solid fa-play">▶️ Play</i></button>
       <button onclick="pause()">⏸ Pause</button>
       <button onclick="next()">⏭ Siguiente</button>
       <button onclick="previous()">⏮ Anterior</button>
     </div>
   </div>
+
 
   <!-- SDK de Spotify -->
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
