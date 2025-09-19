@@ -1,20 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
   <meta charset="UTF-8">
   <title>Mini Spotify</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://kit.fontawesome.com/80e5660207.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
   <h1 style="font-size: 40px;">Mini Spotify</h1>
-  <div id="login-section"style="margin-top: 40px;">
+  <div id="login-section" style="margin-top: 40px;">
     <a href="https://spotifyvidaabackend.onrender.com/login">
       <i class="fa-brands fa-spotify" style="
         font-size: 700px;
         color:#1dd65f;
         "></i>
-        <div></div>
+      <div></div>
     </a>
   </div>
 
@@ -23,12 +25,13 @@
     <img id="profile-pic" src="" alt="Foto">
     <p id="display-name"></p>
     <p id="email"></p>
-<!-- 
+    <!-- 
     <h3>Playlists</h3>
     <div id="playlists"></div> -->
-
+    <div id="current-track">
+      <p>Cancion actual:</p>
+    </div>
     <div id="player-controls" style="display:none;">
-      <p id="current-track">Canción actual: -</p>
       <button onclick="llamarFoto()">Llamar a la foto</button>
       <button onclick="play()"><i onclick="play()" class="fa-solid fa-play">Play</i></button>
       <button onclick="pause()">⏸ Pause</button>
@@ -36,11 +39,11 @@
       <button onclick="previous()">⏮ Anterior</button>
     </div>
   </div>
-  
+
 
   <script src="app.js"></script>
   <!-- SDK de Spotify -->
   <script src="https://sdk.scdn.co/spotify-player.js"></script>
 </body>
-</html>
 
+</html>
