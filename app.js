@@ -74,19 +74,23 @@ window.onSpotifyWebPlaybackSDKReady = () => {
           console.log("No hay canción reproduciéndose ahora.");
           return;
         }
+        if (document.getElementById('spotify-Port')) {
+          document.getElementById('spotify-Port').remove();
+        }
         const containerTrack = document.getElementById("current-track")
         const trackName = data.item.name;
         const artistName = data.item.artists.map(a => a.name).join(", ");
         containerTrack.textContent =
           `Canción actual: ${trackName} - ${artistName}`;
         const albumCover = data.item.album.images[0].url;
-        const container = document.createElement('div');
-        container.id = "portada";
-        container.insertAdjacentHTML("beforeend", `
-          <img class="spotify-Port" src=${albumCover} alt="Spotify Port">
+        const containerPortada = document.createElement('div');
+        containerPortada.id = "portada";
+        containerPortada.insertAdjacentHTML("beforeend", `
+          <img class="spotify-Port" id="spotify-Port" src=${albumCover} alt="Spotify Port">
           `);
-          if (document.getElementById('portada')) return;
-        document.body.append(container);
+        if (document.getElementById('portada')) return;
+        const containerReprodutor = document.getElementById("container-reproductor")
+        containerReprodutor.prepend(containerPortada);
       });
   });
 

@@ -29,7 +29,13 @@
     <!-- <h3>Playlists</h3>
     <div id="playlists"></div> -->
     <p id="current-track">Canción actual: -</p>
-    <div id="player-controls" style="display:none;">
+
+  </div>
+
+  <div id="container-reproductor">
+
+    <p id="current-track"></p>
+    <div id="player-controls" style="display: block;">
       <button onclick="llamarFoto()">Llamar a la foto</button>
       <button onclick="play()"><i onclick="play()" class="fa-solid fa-play">Play</i></button>
       <button onclick="pause()">⏸ Pause</button>
@@ -37,7 +43,6 @@
       <button onclick="previous()">⏮ Anterior</button>
     </div>
   </div>
-
 
   <script src="app.js"></script>
   <!-- SDK de Spotify -->
