@@ -1,4 +1,4 @@
-// Leer token de URL o localStorage
+
 const hash = window.location.hash;
 let token = null;
 
@@ -6,7 +6,7 @@ if (hash) {
   const params = new URLSearchParams(hash.substring(1));
   token = params.get("access_token");
   if (token) localStorage.setItem("spotify_token", token);
-  window.location.hash = ""; // limpiar URL
+  window.location.hash = "";
 } else {
   token = localStorage.getItem("spotify_token");
 }
@@ -15,7 +15,7 @@ if (token) {
   document.getElementById("login-section").style.display = "none";
   document.getElementById("profile-section").style.display = "block";
 
-  // Obtener perfil del usuario
+  // Perfil
   fetch("https://api.spotify.com/v1/me", {
     headers: { Authorization: `Bearer ${token}` }
   })
@@ -26,7 +26,7 @@ if (token) {
       document.getElementById("email").textContent = profile.email;
     });
 
-  // Obtener playlists
+  // Playlists
   fetch("https://api.spotify.com/v1/me/playlists", {
     headers: { Authorization: `Bearer ${token}` }
   })
@@ -37,43 +37,62 @@ if (token) {
         const div = document.createElement("div");
         div.className = "playlist";
         div.innerHTML = `
-          <img src="${pl.images?.[0]?.url || ''}" alt="Cover" style="width:100px">
-          <p>${pl.name}</p>
-          <p>Tracks: ${pl.tracks.total}</p>
-        `;
+            <img src="${pl.images?.[0]?.url || ''}" alt="Cover" style="width:100px">
+            <p>${pl.name}</p>
+            <p>Tracks: ${pl.tracks.total}</p>
+          `;
         div.onclick = () => loadTracks(pl.id);
         playlistsDiv.appendChild(div);
       });
     });
 }
 
-// Funciones de reproducción
-function play() {
-  fetch("https://api.spotify.com/v1/me/player/play", {
-    method: "PUT",
-    headers: { Authorization: `Bearer ${token}` }
+// Web Playback SDK
+window.onSpotifyWebPlaybackSDKReady = () => {
+  const player = new Spotify.Player({
+    name: "Mini Spotify Web Player",
+    getOAuthToken: cb => { cb(token); },
+    volume: 0.8
   });
-}
 
-function pause() {
-  fetch("https://api.spotify.com/v1/me/player/pause", {
-    method: "PUT",
-    headers: { Authorization: `Bearer ${token}` }
+  player.addListener('ready', ({ device_id }) => {
+    console.log('Ready with Device ID', device_id);
+    window.device_id = device_id;
+    document.getElementById("player-controls").style.display = "block";
   });
-}
 
-// Cargar canciones de una playlist
+  player.addListener('player_state_changed', state => {
+    if (!state) return;
+    const track = state.track_window.current_track;
+    document.getElementById("current-track").textContent =
+      `Canción actual: ${track.name} - ${track.artists.map(a => a.name).join(", ")}`;
+  });
+
+  player.connect();
+  window.spotifyPlayer = player;
+};
+
+function play() { window.spotifyPlayer?.resume(); }
+function pause() { window.spotifyPlayer?.pause(); }
+function next() { window.spotifyPlayer?.nextTrack(); }
+function previous() { window.spotifyPlayer?.previousTrack(); }
+
+// Cargar tracks de una playlist y reproducir
 function loadTracks(playlistId) {
   fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
     headers: { Authorization: `Bearer ${token}` }
   })
     .then(res => res.json())
     .then(data => {
-      const controls = document.getElementById("player-controls");
-      controls.style.display = "block";
-      const current = document.getElementById("current-track");
-      current.textContent = "Selecciona una canción para reproducir";
-      // Por simplicidad solo mostramos las canciones
-      console.log("Tracks:", data.items);
+      const uris = data.items.map(item => item.track.uri);
+      // Reproducir todos los tracks de la playlist
+      fetch(`https://api.spotify.com/v1/me/player/play?device_id=${window.device_id}`, {
+        method: 'PUT',
+        body: JSON.stringify({ uris }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
     });
 }
