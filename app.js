@@ -77,7 +77,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         const containerTrack = document.getElementById("current-track")
         const trackName = data.item.name;
         const artistName = data.item.artists.map(a => a.name).join(", ");
-        document.getElementBy('current-song').textContent = `Canción actual: ${trackName} - ${artistName}`;
+        document.getElementById('current-song').textContent = `Canción actual: ${trackName} - ${artistName}`;
         const albumCover = data.item.album.images[0].url;
         containerTrack.insertAdjacentHTML("beforeend", `
           <img class="spotify-Port" src=${albumCover} alt="Spotify Port">
