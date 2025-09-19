@@ -77,3 +77,35 @@ function loadTracks(playlistId) {
       console.log("Tracks:", data.items);
     });
 }
+window.onSpotifyWebPlaybackSDKReady = () => {
+  const player = new Spotify.Player({
+    name: "Mini Spotify Web Player",
+    getOAuthToken: cb => { cb(token); },
+    volume: 0.8
+  });
+
+  player.addListener('ready', ({ device_id }) => {
+    console.log('Ready with Device ID', device_id);
+    document.getElementById("player-section").style.display = "block";
+  });
+
+  player.addListener('player_state_changed', state => {
+    if (!state) return;
+    const track = state.track_window.current_track;
+    document.getElementById("current-track").textContent =
+      `Canción actual: ${track.name} - ${track.artists.map(a => a.name).join(", ")}`;
+  });
+
+  player.connect();
+
+  window.spotifyPlayer = player; // Para usar play/pause/next
+});
+
+// Funciones de control
+function play() {
+  window.spotifyPlayer.resume();
+}
+
+function pause() {
+  window.spotifyPlayer.pause();
+}
