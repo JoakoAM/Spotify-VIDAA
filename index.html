@@ -9,61 +9,69 @@
 </head>
 
 <body>
+  <h1 style="font-size: 40px;">Mini Spotify</h1>
+  <div id="login-section" style="margin-top: 40px;">
+    <a href="https://spotifyvidaabackend.onrender.com/login">
+      <i class="fa-brands fa-spotify" style="
+        font-size: 700px;
+        color:#1dd65f;
+        "></i>
+      <div></div>
+    </a>
+  </div>
 
-  <body>
-    <h1>Mini Spotify DJ</h1>
+  <div id="profile-section" style="display:none;">
+    <h2>Perfil de Spotify</h2>
+    <img id="profile-pic" src="" alt="Foto">
+    <p id="display-name"></p>
+    <p id="email"></p>
 
-    <!-- Login -->
-    <div id="login-section">
-      <a href="https://spotifyvidaa-backend.onrender.com/login">
-        <button>Conectar con Spotify</button>
-      </a>
+    <h3>Playlists</h3>
+    <div id="playlists"></div>
+  <!-- Contenedor reproductor + card -->
+  <div class="player-container" id="player-section" style="display:none;">
+
+    <!-- Reproductor principal -->
+    <div id="spotify-player">
+      <p>Reproductor Web Playback SDK activo aquí.</p>
     </div>
 
-    <!-- Contenedor reproductor + card -->
-    <div class="player-container" id="player-section" style="display:none;">
-
-      <!-- Reproductor principal -->
-      <div id="spotify-player">
-        <p>Reproductor Web Playback SDK activo aquí.</p>
-      </div>
-
-      <!-- Card lateral -->
-      <div class="card" id="mini-card">
-        <div class="top">
-          <div class="pfp">
-            <img id="card-cover" src="" alt="Cover">
-            <div class="playing">
-              <div class="greenline line-1"></div>
-              <div class="greenline line-2"></div>
-              <div class="greenline line-3"></div>
-              <div class="greenline line-4"></div>
-              <div class="greenline line-5"></div>
-            </div>
-          </div>
-          <div class="texts">
-            <p class="title-1" id="card-track">Track</p>
-            <p class="title-2" id="card-artist">Artist</p>
+    <!-- Card lateral -->
+    <div class="card" id="mini-card">
+      <div class="top">
+        <div class="pfp">
+          <img id="card-cover" src="" alt="Cover">
+          <div class="playing">
+            <div class="greenline line-1"></div>
+            <div class="greenline line-2"></div>
+            <div class="greenline line-3"></div>
+            <div class="greenline line-4"></div>
+            <div class="greenline line-5"></div>
           </div>
         </div>
-
-        <div class="controls">
-          <button id="prev">⏮</button>
-          <button id="play">▶️</button>
-          <button id="next">⏭</button>
+        <div class="texts">
+          <p class="title-1" id="card-track">Track</p>
+          <p class="title-2" id="card-artist">Artist</p>
         </div>
-
-        <div class="time">
-          <div class="elapsed" id="card-progress"></div>
-        </div>
-        <p class="timetext time_now" id="card-time-now">0:00</p>
-        <p class="timetext time_full" id="card-time-full">0:00</p>
       </div>
+
+      <div class="controls">
+        <button id="prev">⏮</button>
+        <button id="play">▶️</button>
+        <button id="next">⏭</button>
+      </div>
+
+      <div class="time">
+        <div class="elapsed" id="card-progress"></div>
+      </div>
+      <p class="timetext time_now" id="card-time-now">0:00</p>
+      <p class="timetext time_full" id="card-time-full">0:00</p>
     </div>
+  </div>
 
-    <script src="app.js"></script>
-    <!-- SDK de Spotify -->
-    <script src="https://sdk.scdn.co/spotify-player.js"></script>
-  </body>
+  <script src="app.js"></script>
+  <!-- SDK de Spotify -->
+  <script src="https://sdk.scdn.co/spotify-player.js"></script>
+</body>
 
 </html>
