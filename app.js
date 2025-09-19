@@ -56,7 +56,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   });
 
   player.addListener('ready', ({ device_id }) => {
-    console.log('Ready with Device ID', device_id);
+    console.log('Tamos listos con tu', device_id);
     window.device_id = device_id;
     document.getElementById("player-controls").style.display = "block";
   });
