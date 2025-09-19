@@ -121,3 +121,8 @@ function loadTracks(playlistId) {
       });
     });
 }
+
+// Cargar Spotify SDK
+const script = document.createElement("script");
+script.src = "https://sdk.scdn.co/spotify-player.js";
+document.body.appendChild(script);
