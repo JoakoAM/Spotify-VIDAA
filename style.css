@@ -8,11 +8,15 @@ button {
   background-color: #1DB954;
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: 11px 20px;
   font-size: 16px;
   border-radius: 20px;
   cursor: pointer;
   transition: 0.3s;
+  margin: 12px;
+  width: 96%;
+  display: flex;
+  justify-content: center;
 }
 
 button:hover {
@@ -27,3 +31,18 @@ button:hover {
   align-items: flex-start;
 }
 
+.container-reproductor {
+  width: 700px;
+  display: flex;
+  background: black;
+  height: 500px;
+  justify-self: center;
+  align-items: anchor-center;
+}
+
+.spotify-Port {
+  height: 350px;
+  margin-left: 20px;
+  border-radius: 24px;
+  margin: 20px;
+}
