@@ -88,7 +88,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         containerPortada.insertAdjacentHTML("beforeend", `
           <img class="spotify-Port" id="spotify-Port" src=${albumCover} alt="Spotify Port">
           `);
-        if (document.getElementById('portada')) return;
+        if (document.getElementById('spotify-Port')) return;
         const containerReprodutor = document.getElementById("container-reproductor")
         containerReprodutor.prepend(containerPortada);
       });
