@@ -74,10 +74,10 @@ button:hover {
   font-size: x-large;
   flex-direction: row;
   flex-wrap: nowrap;
-    height: 26px;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    width: 100px
+  height: 26px;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  max-width: 100px
 }
 
 .profile-section {
