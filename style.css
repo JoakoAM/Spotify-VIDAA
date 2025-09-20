@@ -33,22 +33,24 @@ button:hover {
 
 .container-reproductor {
   width: 580px;
-  display: flex;
-  background: black;
   height: 500px;
-  align-items: center;
-  z-index: 1;
   position: fixed;
-  align-self: center;
-  justify-self: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+
+  background: black;
   border: 4px solid #171717;
   border-radius: 10px;
   filter: drop-shadow(3px 2px 0 #32e070) drop-shadow(3px 5px 0 #114302);
-  flex-wrap: wrap;
-  align-content: center;
-  justify-content: center;
-  margin-left: 336px;
+  z-index: 1;
 }
+
 
 .spotify-Port {
   height: 350px;
