@@ -80,7 +80,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         }
         const currentTrack = document.getElementById("current-track")
         const trackName = data.item.name;
-        currentTrack.textContent =`${trackName}`;
+        currentTrack.textContent = `${trackName}`;
         const albumCover = data.item.album.images[0].url;
         const containerPortada = document.getElementById('container-portada');
         containerPortada.insertAdjacentHTML("beforeend", `
