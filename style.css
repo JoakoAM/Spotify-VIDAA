@@ -44,6 +44,10 @@ button:hover {
   border: 4px solid #171717;
   border-radius: 10px;
   filter: drop-shadow(3px 2px 0 #32e070) drop-shadow(3px 5px 0 #114302);
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  margin-left: 336px;
 }
 
 .spotify-Port {
