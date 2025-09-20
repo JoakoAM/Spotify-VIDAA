@@ -32,12 +32,14 @@ button:hover {
 }
 
 .container-reproductor {
-  width: 700px;
+  width: 580px;
   display: flex;
   background: black;
   height: 500px;
   justify-self: center;
   align-items: anchor-center;
+  z-index: 0;
+  position: fixed;
 }
 
 .spotify-Port {
@@ -45,4 +47,18 @@ button:hover {
   margin-left: 20px;
   border-radius: 24px;
   margin: 20px;
+}
+
+.player-in {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+.current-track {
+  margin: 9px;
+  font-family: sans-serif;
+  display: flex;
+  justify-content: space-around;
+  overflow: hidden;
+  font-size: x-large;
 }

@@ -58,7 +58,8 @@ window.onSpotifyWebPlaybackSDKReady = () => {
   player.addListener('ready', ({ device_id }) => {
     console.log('ID', device_id);
     window.device_id = device_id;
-    document.getElementById("player-controls").style.display = "block";
+    document.getElementById("player-controls").setAttribute('class','player-in')
+
   });
 
   player.addListener('player_state_changed', state => {
