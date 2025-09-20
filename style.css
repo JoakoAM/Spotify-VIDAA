@@ -36,11 +36,11 @@ button:hover {
   display: flex;
   background: black;
   height: 500px;
-  align-items: anchor-center;
+  align-items: center;
   z-index: 1;
   position: fixed;
   align-self: center;
-  justify-self: anchor-center;
+  justify-self: center;
   border: 4px solid #171717;
   border-radius: 10px;
   filter: drop-shadow(3px 2px 0 #32e070) drop-shadow(3px 5px 0 #114302);
@@ -74,7 +74,7 @@ button:hover {
 
 .profile-section {
   display: flex;
-  justify-items: anchor-center;
+  justify-items: center;
   width: 212px;
   position: fixed;
   height: 500px;
