@@ -78,10 +78,9 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         if (document.getElementById('spotify-Port')) {
           document.getElementById('spotify-Port').remove();
         }
-        const containerTrack = document.getElementById("current-track")
+        const currentTrack = document.getElementById("current-track")
         const trackName = data.item.name;
-        containerTrack.textContent =
-          `Canción: ${trackName}`;
+        currentTrack.textContent =`${trackName}`;
         const albumCover = data.item.album.images[0].url;
         const containerPortada = document.getElementById('container-portada');
         containerPortada.insertAdjacentHTML("beforeend", `
