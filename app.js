@@ -84,8 +84,7 @@ window.onSpotifyWebPlaybackSDKReady = () => {
           `Canción actual: ${trackName} - ${artistName}`;
         const albumCover = data.item.album.images[0].url;
         const containerPortada = document.getElementById('container-portada');
-        const containerReprodutor = document.getElementById("container-reproductor")
-        containerReprodutor.insertAdjacentHTML("beforeend", `
+        containerPortada.insertAdjacentHTML("beforeend", `
           <img class="spotify-Port" id="spotify-Port" src=${albumCover} alt="Spotify Port">
           `);
       });
