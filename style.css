@@ -36,10 +36,11 @@ button:hover {
   display: flex;
   background: black;
   height: 500px;
-  justify-self: center;
   align-items: anchor-center;
-  z-index: 0;
+  z-index: 1;
   position: fixed;
+  align-self: center;
+  justify-self: anchor-center;
 }
 
 .spotify-Port {
