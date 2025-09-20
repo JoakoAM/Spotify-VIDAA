@@ -83,14 +83,11 @@ window.onSpotifyWebPlaybackSDKReady = () => {
         containerTrack.textContent =
           `Canción actual: ${trackName} - ${artistName}`;
         const albumCover = data.item.album.images[0].url;
-        const containerPortada = document.createElement('div');
-        containerPortada.id = "portada";
-        containerPortada.insertAdjacentHTML("beforeend", `
+        const containerPortada = document.getElementById('container-portada');
+        const containerReprodutor = document.getElementById("container-reproductor")
+        containerReprodutor.insertAdjacentHTML("beforeend", `
           <img class="spotify-Port" id="spotify-Port" src=${albumCover} alt="Spotify Port">
           `);
-        if (document.getElementById('portada')) return;
-        const containerReprodutor = document.getElementById("container-reproductor")
-        containerReprodutor.prepend(containerPortada);
       });
   });
 
