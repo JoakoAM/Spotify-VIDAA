@@ -23,7 +23,6 @@ if (token) {
     .then(profile => {
       document.getElementById("profile-pic").src = profile.images?.[0]?.url || "";
       document.getElementById("display-name").textContent = profile.display_name;
-      document.getElementById("email").textContent = profile.email;
     });
 
   // // Playlists

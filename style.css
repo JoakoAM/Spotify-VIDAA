@@ -104,8 +104,13 @@ button:hover {
 .profile-section h1,
 .profile-section img,
 .profile-section p {
+
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.profile-section p {
+  margin-top: -120px;
 }
